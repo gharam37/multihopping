@@ -3,6 +3,7 @@ package com.example.multihoppin;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.widget.Toast;
 
@@ -24,7 +25,18 @@ public class WifiDirectBroadCast extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         String Action=intent.getAction();
-        if(wifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals((Action))){}
+        if(wifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals((Action))){
+
+            NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+
+            if(networkInfo.isConnected()){
+                wifiP2pManager.requestConnectionInfo(channel,mainActivity.connectionInfoListener);
+            }
+            else{
+
+                mainActivity.ConnectionStatus.setText("A disconnect");
+            }
+        }
         else if(wifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals((Action))){
             wifiP2pManager.requestPeers(channel,mainActivity.peerListListener);
 
